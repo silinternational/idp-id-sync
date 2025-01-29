@@ -1,10 +1,10 @@
-FROM silintl/php8:8.1
-LABEL maintainer="matt_henderson@sil.org"
+FROM silintl/php8:8.3
+LABEL maintainer="gtis_itse_support@sil.org"
 
 ARG GITHUB_REF_NAME
 ENV GITHUB_REF_NAME=$GITHUB_REF_NAME
 
-ENV REFRESHED_AT 2023-11-09
+ENV REFRESHED_AT 2025-01-27
 
 RUN mkdir -p /data
 

@@ -26,7 +26,7 @@ class NotificationContext extends SyncContext
      */
     public function atLeastOneUserHasNoEmailAddress()
     {
-        $this->users[] = new User(['employee_id'=>1]);
+        $this->users[] = new User(['employee_id' => 1]);
     }
 
     /**
@@ -94,7 +94,7 @@ class NotificationContext extends SyncContext
         Assert::assertNotEmpty($email, "No email was found with the subject: " . $subject);
 
         $user = $this->idStore->getActiveUser($this->tempEmployeeId);
-        Assert::assertContains(
+        Assert::assertStringContainsString(
             $user->getHRContactEmail(),
             $email['to_address'],
             "Email was not sent to " . $user->getHRContactEmail()

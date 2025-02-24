@@ -1,107 +1,106 @@
 services:
-    app:
-        build: ./
-        volumes:
-            - ./application:/data
-        env_file:
-            - ./local.env
+  app:
+    build: ./
+    volumes:
+      - ./application:/data
+    env_file:
+      - ./local.env
 
-    broker:
-        image: silintl/idp-id-broker:develop
-        platform: linux/amd64
-        environment:
-            API_ACCESS_KEYS: local-sync-123
-            EMAIL_SERVICE_accessToken: dummy
-            EMAIL_SERVICE_assertValidIp: "false"
-            EMAIL_SERVICE_baseUrl: http://email
-            EMAIL_SERVICE_validIpRanges: 10.20.40.0/24
-            EMAIL_SIGNATURE: Dummy Signature for Local Development
-            EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
-            IDP_NAME: local
-            MYSQL_ROOT_PASSWORD: rootpass
-            MYSQL_HOST: brokerdb
-            MYSQL_DATABASE: broker
-            MYSQL_USER: broker
-            MYSQL_PASSWORD: broker
-            PASSWORD_FORGOT_URL: https://www.example.com/forgot
-            PASSWORD_PROFILE_URL: https://www.example.com/profile
-            SUPPORT_EMAIL: support@example.com
-            MFA_TOTP_apiBaseUrl: not_needed_here
-            MFA_TOTP_apiKey: not_needed_here
-            MFA_TOTP_apiSecret: not_needed_here
-            MFA_WEBAUTHN_apiBaseUrl: not_needed_here
-            MFA_WEBAUTHN_apiKey: not_needed_here
-            MFA_WEBAUTHN_apiSecret: not_needed_here
-        ports:
-            - "8081:80"
-        command: whenavail brokerdb 3306 60 ./run.sh
+  broker:
+    image: silintl/idp-id-broker:7
+    platform: linux/amd64
+    environment:
+      API_ACCESS_KEYS: local-sync-123
+      EMAIL_SERVICE_accessToken: dummy
+      EMAIL_SERVICE_assertValidIp: "false"
+      EMAIL_SERVICE_baseUrl: http://email
+      EMAIL_SERVICE_validIpRanges: 10.20.40.0/24
+      EMAIL_SIGNATURE: Dummy Signature for Local Development
+      EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
+      IDP_NAME: local
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_HOST: brokerdb
+      MYSQL_DATABASE: broker
+      MYSQL_USER: broker
+      MYSQL_PASSWORD: broker
+      PASSWORD_FORGOT_URL: https://www.example.com/forgot
+      PASSWORD_PROFILE_URL: https://www.example.com/profile
+      SUPPORT_EMAIL: support@example.com
+      MFA_TOTP_apiBaseUrl: not_needed_here
+      MFA_TOTP_apiKey: not_needed_here
+      MFA_TOTP_apiSecret: not_needed_here
+      MFA_WEBAUTHN_apiBaseUrl: not_needed_here
+      MFA_WEBAUTHN_apiKey: not_needed_here
+      MFA_WEBAUTHN_apiSecret: not_needed_here
+    ports:
+      - "8081:80"
+    command: whenavail brokerdb 3306 60 ./run.sh
 
-    brokercron:
-        image: silintl/idp-id-broker:develop
-        platform: linux/amd64
-        environment:
-            API_ACCESS_KEYS: local-sync-123
-            EMAIL_SERVICE_accessToken: dummy
-            EMAIL_SERVICE_assertValidIp: "false"
-            EMAIL_SERVICE_baseUrl: http://email
-            EMAIL_SERVICE_validIpRanges: 10.20.40.0/24
-            EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
-            IDP_NAME: local
-            MYSQL_ROOT_PASSWORD: rootpass
-            MYSQL_HOST: brokerdb
-            MYSQL_DATABASE: broker
-            MYSQL_USER: broker
-            MYSQL_PASSWORD: broker
-            RUN_TASK: cron/all
-            MFA_TOTP_apiBaseUrl: not_needed_here
-            MFA_TOTP_apiKey: not_needed_here
-            MFA_TOTP_apiSecret: not_needed_here
-            MFA_WEBAUTHN_apiBaseUrl: not_needed_here
-            MFA_WEBAUTHN_apiKey: not_needed_here
-            MFA_WEBAUTHN_apiSecret: not_needed_here
-        command: whenavail brokerdb 3306 60 ./run.sh
+  brokercron:
+    image: silintl/idp-id-broker:7
+    platform: linux/amd64
+    environment:
+      API_ACCESS_KEYS: local-sync-123
+      EMAIL_SERVICE_accessToken: dummy
+      EMAIL_SERVICE_assertValidIp: "false"
+      EMAIL_SERVICE_baseUrl: http://email
+      EMAIL_SERVICE_validIpRanges: 10.20.40.0/24
+      EMAILER_CLASS: \Sil\SilIdBroker\Behat\Context\fakes\FakeEmailer
+      IDP_NAME: local
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_HOST: brokerdb
+      MYSQL_DATABASE: broker
+      MYSQL_USER: broker
+      MYSQL_PASSWORD: broker
+      RUN_TASK: cron/all
+      MFA_TOTP_apiBaseUrl: not_needed_here
+      MFA_TOTP_apiKey: not_needed_here
+      MFA_TOTP_apiSecret: not_needed_here
+      MFA_WEBAUTHN_apiBaseUrl: not_needed_here
+      MFA_WEBAUTHN_apiKey: not_needed_here
+      MFA_WEBAUTHN_apiSecret: not_needed_here
+    command: whenavail brokerdb 3306 60 ./run.sh
 
-    brokerdb:
-        image: mariadb:10
-        ports:
-            - "3306"
-        environment:
-            MYSQL_ROOT_PASSWORD: rootpass
-            MYSQL_DATABASE: broker
-            MYSQL_USER: broker
-            MYSQL_PASSWORD: broker
+  brokerdb:
+    image: mariadb:10
+    ports:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: broker
+      MYSQL_USER: broker
+      MYSQL_PASSWORD: broker
 
-    phpmyadmin:
-        image: phpmyadmin:5
-        ports:
-        - "8001:80"
-        depends_on:
-        - brokerdb
-        environment:
-            PMA_HOST: brokerdb
+  phpmyadmin:
+    image: phpmyadmin:5
+    ports:
+      - "8001:80"
+    depends_on:
+      - brokerdb
+    environment:
+      PMA_HOST: brokerdb
 
-    cli:
-        build: ./
-        volumes:
-            - ${COMPOSER_CACHE_DIR}:/composer
-            - ./application:/data
-        working_dir: /data
-        env_file:
-            - ./local.env
-        environment:
-            ID_BROKER_CONFIG_accessToken: local-sync-123
-            ID_BROKER_CONFIG_assertValidIp: "false"
-            COMPOSER_CACHE_DIR: /composer
-        command: ["true"]
-        ports:
-            - "22:22"
+  cli:
+    build: ./
+    volumes:
+      - ${COMPOSER_CACHE_DIR}:/composer
+      - ./application:/data
+    working_dir: /data
+    env_file:
+      - ./local.env
+    environment:
+      ID_BROKER_CONFIG_accessToken: local-sync-123
+      ID_BROKER_CONFIG_assertValidIp: "false"
+      COMPOSER_CACHE_DIR: /composer
+    command: ["true"]
+    ports:
+      - "22:22"
 
 networks:
-    default:
-        driver: bridge
-        ipam:
-            driver: default
-            config:
-            - subnet: 10.20.40.0/24
-              gateway: 10.20.40.1
-
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.20.40.0/24
+          gateway: 10.20.40.1

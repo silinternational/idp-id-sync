@@ -39,8 +39,8 @@ depsupdate:
 	docker compose run --rm cli bash -c "composer update --no-scripts"
 	make composershow
 
-phpmyadmin:
-	docker compose up -d phpmyadmin
+adminer:
+	docker compose up -d adminer
 
 psr2:
 	docker compose run --rm cli ./check-psr2.sh
